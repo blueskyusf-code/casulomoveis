@@ -1,0 +1,34 @@
+name: Processar SQL e Enviar para o Site
+
+on:
+  push:
+    branches: [ main ] # Roda toda vez que você der um commit na main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pegar código do Repo A
+        uses: actions/checkout@v3
+
+      - name: Executar o seu SQL
+        run: |
+          # O comando SQL que você criou salvando em um arquivo txt
+          sqlite3 pedidos.db "SELECT id_pedido, CASE WHEN status = 'p' THEN 'pode entregar, ela pagou' WHEN status = 'np' THEN 'espere a pessoa pagar' WHEN status = 'c' THEN 'Não entregue, foi cancelado' END AS situacao FROM pedidos;" > lista_entregador.txt
+
+      - name: Mandar para o Repo B (Site)
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          
+          # Clonando o Repo B para dentro do robô
+          git clone https://x-access-token:${{ secrets.MEU_TOKEN }}@github.com/SEU_USUARIO/REPO_B_SITE.git repo_b
+          
+          # Movendo a lista gerada pelo SQL para o Repo B
+          cp lista_entregador.txt repo_b/
+          
+          cd repo_b
+          git add lista_entregador.txt
+          git commit -m "Lista atualizada via SQL"
+          git push
+          
