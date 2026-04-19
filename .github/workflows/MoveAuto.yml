@@ -22,7 +22,7 @@ jobs:
           git config --global user.email "action@github.com"
           
           # Clonando o Repo B para dentro do robô
-          git clone https://x-access-token:${{ secrets.MEU_TOKEN }}@github.com/SEU_USUARIO/REPO_B_SITE.git repo_b
+          git clone https://x-access-token:${{ secrets.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 }}@github.com/SEU_USUARIO/REPO_B_SITE.git repo_b
           
           # Movendo a lista gerada pelo SQL para o Repo B
           cp lista_entregador.txt repo_b/
